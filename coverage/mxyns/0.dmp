@@ -1,5 +1,5 @@
-{-2=19, -1=49, 0=6, 1=11, 2=2, 3=2, 4=2, 5=2, 6=2, 7=2, 8=2, 9=2, 10=2, 11=2, 12=2, 13=2, 14=2, 15=2, 16=2, 17=2, 18=0}=== COVERAGE #0 RESULTS ===
-BRANCHES COVERED : 18/19 = 94%
+{-2=19, -1=52, 0=6, 1=11, 2=2, 3=2, 4=2, 5=2, 6=2, 7=2, 8=2, 9=2, 10=2, 11=2, 12=2, 13=2, 14=2, 15=2, 16=2, 17=2, 18=3}=== COVERAGE #0 RESULTS ===
+BRANCHES COVERED : 19/19 = 100%
     == PER BRANCH DETAILS ==            [-2] 19 passes
         [0] 6 passes
         [1] 11 passes
@@ -19,11 +19,11 @@ BRANCHES COVERED : 18/19 = 94%
         [15] 2 passes
         [16] 2 passes
         [17] 2 passes
-        [18] NO passes
-    == RAN FROM ==    
+        [18] 3 passes
+    == RAN FROM (last call) ==    
 [fr.mxyns.coverage.Coverage.dumpResults(Coverage.java:63)
  fr.mxyns.coverage.Coverage.markBranch(Coverage.java:82)
- com.jsoniter.spi.OmitValue$Parsed.parse(OmitValue.java:167)
+ com.jsoniter.spi.OmitValue$Parsed.parse(OmitValue.java:168)
  com.jsoniter.spi.Config.updateBindingWithJsonProperty(Config.java:464)
  com.jsoniter.spi.Config.updateBindings(Config.java:421)
  com.jsoniter.spi.Config.updateClassDescriptor(Config.java:250)
