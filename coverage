@@ -1,0 +1,25 @@
+stmt 0 is covered: true
+stmt 1 is covered: true
+stmt 2 is covered: true
+stmt 3 is covered: true
+stmt 4 is covered: true
+stmt 5 is covered: true
+stmt 6 is covered: false
+stmt 7 is covered: false
+stmt 8 is covered: false
+stmt 9 is covered: false
+stmt 10 is covered: false
+stmt 11 is covered: false
+stmt 12 is covered: false
+stmt 13 is covered: false
+stmt 14 is covered: false
+stmt 15 is covered: true
+stmt 16 is covered: false
+stmt 17 is covered: false
+stmt 18 is covered: false
+stmt 19 is covered: false
+stmt 20 is covered: false
+stmt 21 is covered: true
+stmt 22 is covered: false
+stmt 23 is covered: false
+8.0 statements covered of 23 statements: 0.33333334% coverage

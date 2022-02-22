@@ -200,6 +200,7 @@
                     <threadCount>1</threadCount>
                     <reuseForks>false</reuseForks>
                     <forkCount>4</forkCount>
+                    <testFailureIgnore>true</testFailureIgnore>
                     <includes>
                         <include>com.jsoniter.suite.StreamingTests</include>
                         <include>com.jsoniter.suite.NonStreamingTests</include>

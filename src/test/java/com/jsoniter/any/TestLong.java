@@ -1,10 +1,14 @@
 package com.jsoniter.any;
 
+import com.jsoniter.CoverageSuit;
 import junit.framework.TestCase;
 
+import java.io.IOException;
+
 public class TestLong extends TestCase {
-    public void test_to_string_should_trim() {
+    public void test_to_string_should_trim() throws IOException {
         Any any = Any.lazyLong(" 1000".getBytes(), 0, " 1000".length());
         assertEquals("1000", any.toString());
+        CoverageSuit.print();
     }
 }
