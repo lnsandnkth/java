@@ -156,6 +156,7 @@ public interface OmitValue {
             int coverageId = Parsed.constantID;
 
             Coverage.markBranch(coverageId, Coverage.FUNCTION_CALL_KEY);
+            System.out.println("PUTE : " + valueType  + " : " + defaultValueToOmit);
 
             /* branch id = 0 */
             if ("void".equals(defaultValueToOmit)) {

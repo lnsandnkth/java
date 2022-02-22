@@ -422,4 +422,43 @@ public class TestObject extends TestCase {
         String output = JsonStream.serialize(new TestObject19());
         assertEquals("{}", output);
     }
+
+    public static class TestObject20 {
+        @JsonProperty(defaultValueToOmit = "wrong_defaultValueToOmit")
+        public String field1;
+    }
+
+    public void test_defaultValueToOmit_unexpected() {
+
+        try {
+            JsonStream.serialize(new TestObject20());
+            fail();
+        } catch (UnsupportedOperationException ignored) {}
+    }
+
+    public static class TestObject21 {
+        @JsonProperty(defaultValueToOmit = "wrong_defaultValueToOmit")
+        public Character field1;
+    }
+
+    public void test_defaultValueToOmit_Character_longer_than_one() {
+
+        try {
+            JsonStream.serialize(new TestObject21());
+            fail();
+        } catch (UnsupportedOperationException ignored) {}
+    }
+
+    public static class TestObject22 {
+        @JsonProperty(defaultValueToOmit = "wrong_defaultValueToOmit")
+        public char field1;
+    }
+
+    public void test_defaultValueToOmit_char_longer_than_one() {
+
+        try {
+            JsonStream.serialize(new TestObject22());
+            fail();
+        } catch (UnsupportedOperationException ignored) {}
+    }
 }
