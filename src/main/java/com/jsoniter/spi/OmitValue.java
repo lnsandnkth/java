@@ -1,6 +1,14 @@
 package com.jsoniter.spi;
 
+import com.google.gson.internal.bind.util.ISO8601Utils;
+import fr.mxyns.coverage.Coverage;
+
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public interface OmitValue {
 
@@ -134,61 +142,130 @@ public interface OmitValue {
             this.defaultValue = defaultValue;
             this.code = code;
         }
+        
+        public static int constantID;
+        static {
+            System.out.println("=== COVERAGE INITIATED ===");
+            constantID = Coverage.initCoverage(19);
+            Coverage.dumpResults(constantID);
+            System.out.println("=== DUMPED RESULTS ===");
+        }
 
         public static OmitValue parse(Type valueType, String defaultValueToOmit) {
+
+            int coverageId = Parsed.constantID;
+
+            Coverage.markBranch(coverageId, Coverage.FUNCTION_CALL_KEY);
+
+            /* branch id = 0 */
             if ("void".equals(defaultValueToOmit)) {
+                Coverage.markBranch(coverageId, 0);
                 return null;
-            } else if ("null".equals(defaultValueToOmit)) {
+            }
+            /* branch id = 1 */
+            else if ("null".equals(defaultValueToOmit)) {
+                Coverage.markBranch(coverageId, 1);
                 return new OmitValue.Null();
-            } else if (boolean.class.equals(valueType)) {
+            }
+            /* branch id = 2 */
+            else if (boolean.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 2);
                 Boolean defaultValue = Boolean.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
-            } else if (Boolean.class.equals(valueType)) {
+            }
+            /* branch id = 3 */
+            else if (Boolean.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 3);
                 Boolean defaultValue = Boolean.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.booleanValue()");
-            } else if (int.class.equals(valueType)) {
+            }
+            /* branch id = 4 */
+            else if (int.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 4);
                 Integer defaultValue = Integer.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
-            } else if (Integer.class.equals(valueType)) {
+            }
+            /* branch id = 5 */
+            else if (Integer.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 5);
                 Integer defaultValue = Integer.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.intValue()");
-            } else if (byte.class.equals(valueType)) {
+            }
+            /* branch id = 6 */
+            else if (byte.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 6);
                 Byte defaultValue = Byte.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
-            } else if (Byte.class.equals(valueType)) {
+            }
+            /* branch id = 7 */
+            else if (Byte.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 7);
                 Byte defaultValue = Byte.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.byteValue()");
-            } else if (short.class.equals(valueType)) {
+            }
+            /* branch id = 8 */
+            else if (short.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 8);
                 Short defaultValue = Short.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
-            } else if (Short.class.equals(valueType)) {
+            }
+            /* branch id = 9 */
+            else if (Short.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 9);
                 Short defaultValue = Short.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.shortValue()");
-            } else if (long.class.equals(valueType)) {
+            }
+            /* branch id = 10 */
+            else if (long.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 10);
                 Long defaultValue = Long.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "L == %s");
-            } else if (Long.class.equals(valueType)) {
+            }
+            /* branch id = 11 */
+            else if (Long.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 11);
                 Long defaultValue = Long.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "L == %s.longValue()");
-            } else if (float.class.equals(valueType)) {
+            }
+            /* branch id = 12 */
+            else if (float.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 12);
                 Float defaultValue = Float.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "F == %s");
-            } else if (Float.class.equals(valueType)) {
+            }
+            /* branch id = 13 */
+            else if (Float.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 13);
                 Float defaultValue = Float.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "F == %s.floatValue()");
-            } else if (double.class.equals(valueType)) {
+            }
+            /* branch id = 14 */
+            else if (double.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 14);
                 Double defaultValue = Double.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "D == %s");
-            } else if (Double.class.equals(valueType)) {
+            }
+            /* branch id = 15 */
+            else if (Double.class.equals(valueType)) {
+                Coverage.markBranch(coverageId, 15);
                 Double defaultValue = Double.valueOf(defaultValueToOmit);
                 return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "D == %s.doubleValue()");
-            } else if (char.class.equals(valueType) && defaultValueToOmit.length() == 1) {
+            }
+            /* branch id = 16 */
+            else if (char.class.equals(valueType) && defaultValueToOmit.length() == 1) {
+                Coverage.markBranch(coverageId, 16);
                 Character defaultValue = defaultValueToOmit.charAt(0);
                 return new OmitValue.Parsed(defaultValue, "'" + defaultValueToOmit + "' == %s");
-            } else if (Character.class.equals(valueType) && defaultValueToOmit.length() == 1) {
+            }
+            /* branch id = 17 */
+            else if (Character.class.equals(valueType) && defaultValueToOmit.length() == 1) {
+                Coverage.markBranch(coverageId, 17);
                 Character defaultValue = defaultValueToOmit.charAt(0);
                 return new OmitValue.Parsed(defaultValue, "'" + defaultValueToOmit + "' == %s.charValue()");
-            } else {
+            }
+            /* branch id = 18 */
+            else {
+                Coverage.markBranch(coverageId, 18);
                 throw new UnsupportedOperationException("failed to parse defaultValueToOmit: " + defaultValueToOmit);
             }
         }
