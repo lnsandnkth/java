@@ -59,6 +59,10 @@ public class Coverage {
                 builder.append("        [" + branchId + "] " + (coverage.get(branchId) > 0 ? coverage.get(branchId) : "NO") + " passes\n");
         }
 
+        builder.append("    == RAN FROM (last call) ==    \n");
+        builder.append(Arrays.toString(new Exception().getStackTrace()).replaceAll(",", "\n"));
+
+
         try {
             new File("coverage/mxyns/").mkdirs();
             BufferedWriter writer = new BufferedWriter(new FileWriter("coverage/mxyns/" + id + ".dmp", false));
