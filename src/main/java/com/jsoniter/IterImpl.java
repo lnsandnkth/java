@@ -214,56 +214,74 @@ class IterImpl {
         return false;
     }
 
+    // function +1 = 1
     public final static int readStringSlowPath(JsonIterator iter, int j) throws IOException {
         try {
             boolean isExpectingLowSurrogate = false;
             for (int i = iter.head; i < iter.tail; ) {
+                // for +1 = 2
                 int bc = iter.buf[i++];
                 if (bc == '"') {
+                    // if +1 = 3
                     iter.head = i;
                     return j;
                 }
                 if (bc == '\\') {
+                    // if +1 = 4
                     bc = iter.buf[i++];
                     switch (bc) {
                         case 'b':
+                            // case +1 = 5
                             bc = '\b';
                             break;
                         case 't':
+                            // case +1 = 6
                             bc = '\t';
                             break;
                         case 'n':
+                            // case +1 = 7
                             bc = '\n';
                             break;
                         case 'f':
+                            // case +1 = 8
                             bc = '\f';
                             break;
                         case 'r':
+                            // case +1 = 9
                             bc = '\r';
                             break;
                         case '"':
+                            // case +1 = 10
                         case '/':
+                            // case +1 = 11
                         case '\\':
+                            // case +1 = 12
                             break;
                         case 'u':
+                            // case +1 = 13
                             bc = (IterImplString.translateHex(iter.buf[i++]) << 12) +
                                     (IterImplString.translateHex(iter.buf[i++]) << 8) +
                                     (IterImplString.translateHex(iter.buf[i++]) << 4) +
                                     IterImplString.translateHex(iter.buf[i++]);
                             if (Character.isHighSurrogate((char) bc)) {
+                                // if +1 = 14
                                 if (isExpectingLowSurrogate) {
+                                    // if +1 = 15
                                     throw new JsonException("invalid surrogate");
                                 } else {
                                     isExpectingLowSurrogate = true;
                                 }
                             } else if (Character.isLowSurrogate((char) bc)) {
+                                // else if +1 = 16
                                 if (isExpectingLowSurrogate) {
+                                    // if +1 = 17
                                     isExpectingLowSurrogate = false;
                                 } else {
                                     throw new JsonException("invalid surrogate");
                                 }
                             } else {
                                 if (isExpectingLowSurrogate) {
+                                    // if +1 = 18
                                     throw new JsonException("invalid surrogate");
                                 }
                             }
@@ -273,35 +291,44 @@ class IterImpl {
                             throw iter.reportError("readStringSlowPath", "invalid escape character: " + bc);
                     }
                 } else if ((bc & 0x80) != 0) {
+                    // else if +1 = 19
                     final int u2 = iter.buf[i++];
                     if ((bc & 0xE0) == 0xC0) {
+                        // if +1 = 20
                         bc = ((bc & 0x1F) << 6) + (u2 & 0x3F);
                     } else {
                         final int u3 = iter.buf[i++];
                         if ((bc & 0xF0) == 0xE0) {
+                            // if +1 = 21
                             bc = ((bc & 0x0F) << 12) + ((u2 & 0x3F) << 6) + (u3 & 0x3F);
                         } else {
                             final int u4 = iter.buf[i++];
                             if ((bc & 0xF8) == 0xF0) {
+                                // if +1  = 22
                                 bc = ((bc & 0x07) << 18) + ((u2 & 0x3F) << 12) + ((u3 & 0x3F) << 6) + (u4 & 0x3F);
                             } else {
                                 throw iter.reportError("readStringSlowPath", "invalid unicode character");
                             }
 
                             if (bc >= 0x10000) {
+                                // if +1 = 23
                                 // check if valid unicode
-                                if (bc >= 0x110000)
+                                if (bc >= 0x110000){
+                                    // if +1 = 24
                                     throw iter.reportError("readStringSlowPath", "invalid unicode character");
+                                }
 
                                 // split surrogates
                                 final int sup = bc - 0x10000;
                                 if (iter.reusableChars.length == j) {
+                                    // if +1 = 25
                                     char[] newBuf = new char[iter.reusableChars.length * 2];
                                     System.arraycopy(iter.reusableChars, 0, newBuf, 0, iter.reusableChars.length);
                                     iter.reusableChars = newBuf;
                                 }
                                 iter.reusableChars[j++] = (char) ((sup >>> 10) + 0xd800);
                                 if (iter.reusableChars.length == j) {
+                                    // if +1 = 26
                                     char[] newBuf = new char[iter.reusableChars.length * 2];
                                     System.arraycopy(iter.reusableChars, 0, newBuf, 0, iter.reusableChars.length);
                                     iter.reusableChars = newBuf;
@@ -313,6 +340,7 @@ class IterImpl {
                     }
                 }
                 if (iter.reusableChars.length == j) {
+                    // if +1 = 27
                     char[] newBuf = new char[iter.reusableChars.length * 2];
                     System.arraycopy(iter.reusableChars, 0, newBuf, 0, iter.reusableChars.length);
                     iter.reusableChars = newBuf;
@@ -321,6 +349,7 @@ class IterImpl {
             }
             throw iter.reportError("readStringSlowPath", "incomplete string");
         } catch (IndexOutOfBoundsException e) {
+            // catch +1 = 28
             throw iter.reportError("readString", "incomplete string");
         }
     }
