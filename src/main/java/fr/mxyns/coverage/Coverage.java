@@ -36,7 +36,7 @@ public class Coverage {
         int branchCount = coverage.get(BRANCH_COUNT_KEY);
         int coveredBranches = 0;
         for (Integer branchId : coverage.keySet()) {
-            coveredBranches += ((branchId > 0 && coverage.get(branchId) > 0) ? 1 : 0);
+            coveredBranches += ((branchId >= 0 && coverage.get(branchId) > 0) ? 1 : 0);
         }
 
         StringBuilder builder = new StringBuilder();

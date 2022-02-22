@@ -1,5 +1,5 @@
 {-2=19, -1=49, 0=6, 1=11, 2=2, 3=2, 4=2, 5=2, 6=2, 7=2, 8=2, 9=2, 10=2, 11=2, 12=2, 13=2, 14=2, 15=2, 16=2, 17=2, 18=0}=== COVERAGE #0 RESULTS ===
-BRANCHES COVERED : 17/19 = 89%
+BRANCHES COVERED : 18/19 = 94%
     == PER BRANCH DETAILS ==            [-2] 19 passes
         [0] 6 passes
         [1] 11 passes
