@@ -48,7 +48,7 @@ class StreamImplString {
 
     static {
         for (int i = 0; i < CAN_DIRECT_WRITE.length; i++) {
-            if (i > 31 && i < 126 && i != '"' && i != '\\') {
+            if (i > 31 && i <= 126 && i != '"' && i != '\\') {
                 CAN_DIRECT_WRITE[i] = true;
             }
         }
@@ -132,7 +132,7 @@ class StreamImplString {
         if (escapeUnicode) {
             for (; i < valLen; i++) {
                 int c = val.charAt(i);
-                if (c > 125) {
+                if (c > 127) {
                     writeAsSlashU(stream, c);
                 } else {
                     writeAsciiChar(stream, c);
@@ -147,7 +147,7 @@ class StreamImplString {
         int _surrogate;
         for (; i < valLen; i++) {
             int c = val.charAt(i);
-            if (c > 125) {
+            if (c > 127) {
                 if (c < 0x800) { // 2-byte
                     stream.write(
                             (byte) (0xc0 | (c >> 6)),

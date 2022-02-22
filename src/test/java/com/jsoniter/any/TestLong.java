@@ -1,6 +1,10 @@
 package com.jsoniter.any;
 
+
 import com.jsoniter.CoverageSuit;
+
+import com.jsoniter.spi.JsonException;
+
 import junit.framework.TestCase;
 
 import java.io.IOException;
@@ -10,5 +14,22 @@ public class TestLong extends TestCase {
         Any any = Any.lazyLong(" 1000".getBytes(), 0, " 1000".length());
         assertEquals("1000", any.toString());
         CoverageSuit.print();
+    }
+
+    public void test_should_fail_with_leading_zero() {
+        byte[] bytes = "01".getBytes();
+        Any any = Any.lazyLong(bytes, 0, bytes.length);
+        try {
+            any.toLong();
+            fail("This should fail.");
+        } catch (JsonException e) {
+
+        }
+    }
+
+    public void test_should_work_with_zero() {
+        byte[] bytes = "0".getBytes();
+        Any any = Any.lazyLong(bytes, 0, bytes.length);
+        assertEquals(0L, any.toLong());
     }
 }

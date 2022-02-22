@@ -53,9 +53,11 @@ import org.junit.runners.Suite;
         TestGson.class,
         com.jsoniter.output.TestGson.class,
         TestStreamBuffer.class,
+        IterImplForStreamingTest.class,
         TestCollection.class,
         TestList.class,
         TestAnnotationJsonObject.class,
-        TestLong.class})
+        TestLong.class,
+        TestOmitValue.class})
 public abstract class AllTestCases {
 }
