@@ -3,7 +3,7 @@ package com.jsoniter;
 import com.jsoniter.any.Any;
 import com.jsoniter.spi.JsonException;
 import com.jsoniter.spi.Slice;
-import com.jsoniter.CreateFile;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -224,6 +224,7 @@ class IterImpl {
                 booleanArray[1] = true;
                 int bc = iter.buf[i++];
                 if (bc == '"') {
+                    // test special character ", whether string contains this character could be read correctly
                     booleanArray[2] = true;
                     iter.head = i;
                     return j;
@@ -234,22 +235,27 @@ class IterImpl {
                     switch (bc) {
                         case 'b':
                             bc = '\b';
+                            // test when string contain \\b, whether change to \b correctly
                             booleanArray[4] = true;
                             break;
                         case 't':
                             bc = '\t';
+                            // test when string contain \\t, whether change to \t correctly
                             booleanArray[5] = true;
                             break;
                         case 'n':
                             bc = '\n';
+                            // test when string contain \\n, whether change to \n correctly
                             booleanArray[6] = true;
                             break;
                         case 'f':
                             bc = '\f';
+                            // test when string contain \\f, whether change to \f correctly
                             booleanArray[7] = true;
                             break;
                         case 'r':
                             bc = '\r';
+                            // test when string contain \\r, whether change to \r correctly
                             booleanArray[8] = true;
                             break;
                         case '"':
@@ -266,25 +272,31 @@ class IterImpl {
                                     (IterImplString.translateHex(iter.buf[i++]) << 4) +
                                     IterImplString.translateHex(iter.buf[i++]);
                             if (Character.isHighSurrogate((char) bc)) {
+                                // test whether HighSurrogate char would be identified (A 16-bit code unit in the range D800_16 to DBFF_16)
                                 booleanArray[13] = true;
                                 if (isExpectingLowSurrogate) {
+                                    // test whether when isExpectingLowSurrogate is true, it will throw expected exception
                                     booleanArray[14] = true;
+                                    CreateFile.appendString(Arrays.toString(booleanArray) + "\n");
                                     throw new JsonException("invalid surrogate");
                                 } else {
                                     isExpectingLowSurrogate = true;
                                 }
                             } else if (Character.isLowSurrogate((char) bc)) {
+                                // test whether LowSurrogate char would be identified
                                 booleanArray[15] = true;
                                 if (isExpectingLowSurrogate) {
                                     booleanArray[16] = true;
-
+                                    // test whether when isExpectingLowSurrogate is true, it will throw expected exception
                                     isExpectingLowSurrogate = false;
                                 } else {
                                     throw new JsonException("invalid surrogate");
                                 }
                             } else {
                                 if (isExpectingLowSurrogate) {
+                                    // test whether the remaining case violate the LowSurrogate expectation
                                     booleanArray[17] = true;
+                                    CreateFile.appendString(Arrays.toString(booleanArray) + "\n");
                                     throw new JsonException("invalid surrogate");
                                 }
                             }
@@ -318,6 +330,7 @@ class IterImpl {
                                 // check if valid unicode
                                 if (bc >= 0x110000) {
                                     booleanArray[23] = true;
+                                    CreateFile.appendString(Arrays.toString(booleanArray) + "\n");
                                     throw iter.reportError("readStringSlowPath", "invalid unicode character");
                                 }
 
@@ -354,6 +367,7 @@ class IterImpl {
             throw iter.reportError("readStringSlowPath", "incomplete string");
         } catch (IndexOutOfBoundsException e) {
             booleanArray[27] = true;
+            CreateFile.appendString(Arrays.toString(booleanArray) + "\n");
             throw iter.reportError("readString", "incomplete string");
         }
     }
