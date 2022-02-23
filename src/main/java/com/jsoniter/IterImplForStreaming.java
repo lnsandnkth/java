@@ -4,7 +4,11 @@ import com.jsoniter.any.Any;
 import com.jsoniter.spi.JsonException;
 import com.jsoniter.spi.Slice;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 class IterImplForStreaming {
 
@@ -564,10 +568,24 @@ class IterImplForStreaming {
 
     public static final numberChars readNumber(final JsonIterator iter) throws IOException {
         int j = 0;
+        int k = 0; // statement number
+        List<String> result = null;
+        try {
+            result = Files.readAllLines(Paths.get("src/main/java/com/jsoniter/iterimpforstreamingcoverage.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         boolean dotFound = false;
         for (; ; ) {
+            k = 0;
+            result.set(k, "statement " + (k + 1) + " is covered = true");
             for (int i = iter.head; i < iter.tail; i++) {
+                k = 1;
+                result.set(k, "statement " + (k + 1) + " is covered = true");
                 if (j == iter.reusableChars.length) {
+                    // branch not checked
+                    k = 2;
+                    result.set(k, "statement " + (k + 1) + " is covered = true");
                     char[] newBuf = new char[iter.reusableChars.length * 2];
                     System.arraycopy(iter.reusableChars, 0, newBuf, 0, iter.reusableChars.length);
                     iter.reusableChars = newBuf;
@@ -575,34 +593,88 @@ class IterImplForStreaming {
                 byte c = iter.buf[i];
                 switch (c) {
                     case '.':
+                        k = 3;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case 'e':
+                        k = 4;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case 'E':
+                        k = 5;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                         dotFound = true;
                         // fallthrough
                     case '-':
+                        k = 6;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '+':
+                        k = 7;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '0':
+                        k = 8;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '1':
+                        k = 9;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '2':
+                        k = 10;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '3':
+                        k = 11;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '4':
+                        k = 12;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '5':
+                        k = 13;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '6':
+                        k = 14;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '7':
+                        k = 15;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '8':
+                        k = 16;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                     case '9':
+                        k = 17;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                         iter.reusableChars[j++] = (char) c;
                         break;
                     default:
+                        k = 18;
+                        result.set(k, "statement " + (k + 1) + " is covered = true");
                         iter.head = i;
                         numberChars numberChars = new numberChars();
                         numberChars.chars = iter.reusableChars;
                         numberChars.charsLength = j;
                         numberChars.dotFound = dotFound;
+                        FileWriter writer = null;
+                        try {
+                            writer = new FileWriter("src/main/java/com/jsoniter/iterimpforstreamingcoverage.txt");
+                            for (String str : result) {
+                                writer.write(str + System.lineSeparator());
+                            }
+                            writer.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         return numberChars;
                 }
             }
             if (!IterImpl.loadMore(iter)) {
+                k = 19;
+                result.set(k, "statement " + (k + 1) + " is covered = true");
+                FileWriter writer = null;
+                try {
+                    writer = new FileWriter("src/main/java/com/jsoniter/iterimpforstreamingcoverage.txt");
+                    for (String str : result) {
+                        writer.write(str + System.lineSeparator());
+                    }
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 iter.head = iter.tail;
                 numberChars numberChars = new numberChars();
                 numberChars.chars = iter.reusableChars;
@@ -611,6 +683,7 @@ class IterImplForStreaming {
                 return numberChars;
             }
         }
+
     }
 
     static final double readDouble(final JsonIterator iter) throws IOException {
