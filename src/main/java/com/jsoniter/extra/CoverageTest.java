@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class CoverageTest {
 
-    public static boolean[] coverageArray = new boolean[18];
+    public static boolean[] coverageArray = new boolean[20];
 
     public static void writeToFile() throws IOException, IOException {
         String outputString = "";
