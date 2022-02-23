@@ -271,35 +271,7 @@ class IterImpl {
                                     (IterImplString.translateHex(iter.buf[i++]) << 8) +
                                     (IterImplString.translateHex(iter.buf[i++]) << 4) +
                                     IterImplString.translateHex(iter.buf[i++]);
-                            if (Character.isHighSurrogate((char) bc)) {
-                                // test whether HighSurrogate char would be identified (A 16-bit code unit in the range D800_16 to DBFF_16)
-                                booleanArray[13] = true;
-                                if (isExpectingLowSurrogate) {
-                                    // test whether when isExpectingLowSurrogate is true, it will throw expected exception
-                                    booleanArray[14] = true;
-                                    CreateFile.appendString(Arrays.toString(booleanArray) + "\n");
-                                    throw new JsonException("invalid surrogate");
-                                } else {
-                                    isExpectingLowSurrogate = true;
-                                }
-                            } else if (Character.isLowSurrogate((char) bc)) {
-                                // test whether LowSurrogate char would be identified
-                                booleanArray[15] = true;
-                                if (isExpectingLowSurrogate) {
-                                    booleanArray[16] = true;
-                                    // test whether when isExpectingLowSurrogate is true, it will throw expected exception
-                                    isExpectingLowSurrogate = false;
-                                } else {
-                                    throw new JsonException("invalid surrogate");
-                                }
-                            } else {
-                                if (isExpectingLowSurrogate) {
-                                    // test whether the remaining case violate the LowSurrogate expectation
-                                    booleanArray[17] = true;
-                                    CreateFile.appendString(Arrays.toString(booleanArray) + "\n");
-                                    throw new JsonException("invalid surrogate");
-                                }
-                            }
+                            isExpectingLowSurrogate = changeSurrogate(bc, isExpectingLowSurrogate);
                             break;
 
                         default:
@@ -318,49 +290,24 @@ class IterImpl {
                             bc = ((bc & 0x0F) << 12) + ((u2 & 0x3F) << 6) + (u3 & 0x3F);
                         } else {
                             final int u4 = iter.buf[i++];
-                            if ((bc & 0xF8) == 0xF0) {
-                                booleanArray[21] = true;
-                                bc = ((bc & 0x07) << 18) + ((u2 & 0x3F) << 12) + ((u3 & 0x3F) << 6) + (u4 & 0x3F);
-                            } else {
-                                throw iter.reportError("readStringSlowPath", "invalid unicode character");
-                            }
+                            bc = readSpecialHex(bc, iter, u2, u3, u4);
 
                             if (bc >= 0x10000) {
                                 booleanArray[22] = true;
-                                // check if valid unicode
-                                if (bc >= 0x110000) {
-                                    booleanArray[23] = true;
-                                    CreateFile.appendString(Arrays.toString(booleanArray) + "\n");
-                                    throw iter.reportError("readStringSlowPath", "invalid unicode character");
-                                }
+                                checkLargeBuf(bc, iter);
 
                                 // split surrogates
                                 final int sup = bc - 0x10000;
-                                if (iter.reusableChars.length == j) {
-                                    booleanArray[24] = true;
-                                    char[] newBuf = new char[iter.reusableChars.length * 2];
-                                    System.arraycopy(iter.reusableChars, 0, newBuf, 0, iter.reusableChars.length);
-                                    iter.reusableChars = newBuf;
-                                }
+                                iter.reusableChars = checkSurrogates(iter, j);
                                 iter.reusableChars[j++] = (char) ((sup >>> 10) + 0xd800);
-                                if (iter.reusableChars.length == j) {
-                                    booleanArray[25] = true;
-                                    char[] newBuf = new char[iter.reusableChars.length * 2];
-                                    System.arraycopy(iter.reusableChars, 0, newBuf, 0, iter.reusableChars.length);
-                                    iter.reusableChars = newBuf;
-                                }
+                                iter.reusableChars = checkSurrogates(iter, j);
                                 iter.reusableChars[j++] = (char) ((sup & 0x3ff) + 0xdc00);
                                 continue;
                             }
                         }
                     }
                 }
-                if (iter.reusableChars.length == j) {
-                    booleanArray[26] = true;
-                    char[] newBuf = new char[iter.reusableChars.length * 2];
-                    System.arraycopy(iter.reusableChars, 0, newBuf, 0, iter.reusableChars.length);
-                    iter.reusableChars = newBuf;
-                }
+                iter.reusableChars = checkSurrogates(iter, j);
                 iter.reusableChars[j++] = (char) bc;
             }
             CreateFile.appendString(Arrays.toString(booleanArray) + "\n");
@@ -370,6 +317,103 @@ class IterImpl {
             CreateFile.appendString(Arrays.toString(booleanArray) + "\n");
             throw iter.reportError("readString", "incomplete string");
         }
+    }
+    private static int readSpecialHex(int bc, JsonIterator iter, int u2, int u3, int u4) {
+        if ((bc & 0xF8) == 0xF0) {
+            bc = ((bc & 0x07) << 18) + ((u2 & 0x3F) << 12) + ((u3 & 0x3F) << 6) + (u4 & 0x3F);
+        } else {
+            throw iter.reportError("readStringSlowPath", "invalid unicode character");
+        }
+        return bc;
+    }
+    private static void checkLargeBuf(int bc, JsonIterator iter) {
+        // check if valid unicode
+        if (bc >= 0x110000) {
+            throw iter.reportError("readStringSlowPath", "invalid unicode character");
+        }
+    }
+    private static char[] checkSurrogates(JsonIterator iter, int j) {
+        if (iter.reusableChars.length == j) {
+            char[] newBuf = new char[iter.reusableChars.length * 2];
+            System.arraycopy(iter.reusableChars, 0, newBuf, 0, iter.reusableChars.length);
+            iter.reusableChars = newBuf;
+            return newBuf;
+        } else {
+            return iter.reusableChars;
+        }
+
+    }
+
+    private static int switchCase(int bc, int i, JsonIterator iter, boolean isExpectingLowSurrogate) {
+        switch (bc) {
+            case 'b':
+                bc = '\b';
+                break;
+            case 't':
+                bc = '\t';
+                break;
+            case 'n':
+                bc = '\n';
+                break;
+            case 'f':
+                bc = '\f';
+                break;
+            case 'r':
+                bc = '\r';
+                break;
+            case '"':
+            case '/':
+            case '\\':
+                break;
+            case 'u':
+                bc = (IterImplString.translateHex(iter.buf[i++]) << 12) +
+                        (IterImplString.translateHex(iter.buf[i++]) << 8) +
+                        (IterImplString.translateHex(iter.buf[i++]) << 4) +
+                        IterImplString.translateHex(iter.buf[i++]);
+                if (Character.isHighSurrogate((char) bc)) {
+                    if (isExpectingLowSurrogate) {
+                        throw new JsonException("invalid surrogate");
+                    } else {
+                        isExpectingLowSurrogate = true;
+                    }
+                } else if (Character.isLowSurrogate((char) bc)) {
+                    if (isExpectingLowSurrogate) {
+                        isExpectingLowSurrogate = false;
+                    } else {
+                        throw new JsonException("invalid surrogate");
+                    }
+                } else {
+                    if (isExpectingLowSurrogate) {
+                        throw new JsonException("invalid surrogate");
+                    }
+                }
+                break;
+
+            default:
+                throw iter.reportError("readStringSlowPath", "invalid escape character: " + bc);
+        }
+        return i;
+    }
+
+    private static boolean changeSurrogate(int bc, boolean isExpectingLowSurrogate) {
+        if (Character.isHighSurrogate((char) bc)) {
+            if (isExpectingLowSurrogate) {
+                throw new JsonException("invalid surrogate");
+            } else {
+                isExpectingLowSurrogate = true;
+            }
+        } else if (Character.isLowSurrogate((char) bc)) {
+            if (isExpectingLowSurrogate) {
+                isExpectingLowSurrogate = false;
+            } else {
+                throw new JsonException("invalid surrogate");
+            }
+        } else {
+            if (isExpectingLowSurrogate) {
+                throw new JsonException("invalid surrogate");
+            }
+        }
+        return isExpectingLowSurrogate;
     }
 
     public static int updateStringCopyBound(final JsonIterator iter, final int bound) {
