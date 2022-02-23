@@ -195,6 +195,8 @@ class CodegenImplNative {
 
     }
 
+    // coverage requirements: cover all if (valueType == boolean.class) branches,
+    // to check if every type is read in correctly
     private static String genReadOp(String cacheKey, Type valueType) {
         // ------------------------------------------------------------------------
 
