@@ -334,6 +334,7 @@ public class GsonCompatibilityMode extends Config {
     @Override
     public Decoder createDecoder(String cacheKey, Type type) {
         if (Date.class == type) {
+            CoverageTest.coverageArray[0] = true;
             return new Decoder() {
                 @Override
                 public Object decode(JsonIterator iter) throws IOException {
@@ -347,17 +348,22 @@ public class GsonCompatibilityMode extends Config {
                 }
             };
         } else if (String.class == type) {
+            CoverageTest.coverageArray[1] = true;
             return new Decoder() {
                 @Override
                 public Object decode(JsonIterator iter) throws IOException {
                     ValueType valueType = iter.whatIsNext();
                     if (valueType == ValueType.STRING) {
+                        CoverageTest.coverageArray[2] = true;
                         return iter.readString();
                     } else if (valueType == ValueType.NUMBER) {
+                        CoverageTest.coverageArray[3] = true;
                         return iter.readNumberAsString();
                     } else if (valueType == ValueType.BOOLEAN) {
+                        CoverageTest.coverageArray[4] = true;
                         return iter.readBoolean() ? "true" : "false";
                     } else if (valueType == ValueType.NULL) {
+                        CoverageTest.coverageArray[5] = true;
                         iter.skip();
                         return null;
                     } else {
@@ -371,8 +377,10 @@ public class GsonCompatibilityMode extends Config {
                 public boolean decodeBoolean(JsonIterator iter) throws IOException {
                     ValueType valueType = iter.whatIsNext();
                     if (valueType == ValueType.BOOLEAN) {
+                        CoverageTest.coverageArray[6] = true;
                         return iter.readBoolean();
                     } else if (valueType == ValueType.NULL) {
+                        CoverageTest.coverageArray[7] = true;
                         iter.skip();
                         return false;
                     } else {
@@ -381,13 +389,16 @@ public class GsonCompatibilityMode extends Config {
                 }
             };
         } else if (long.class == type) {
+            CoverageTest.coverageArray[8] = true;
             return new Decoder.LongDecoder() {
                 @Override
                 public long decodeLong(JsonIterator iter) throws IOException {
                     ValueType valueType = iter.whatIsNext();
                     if (valueType == ValueType.NUMBER) {
+                        CoverageTest.coverageArray[9] = true;
                         return iter.readLong();
                     } else if (valueType == ValueType.NULL) {
+                        CoverageTest.coverageArray[10] = true;
                         iter.skip();
                         return 0;
                     } else {
@@ -396,13 +407,16 @@ public class GsonCompatibilityMode extends Config {
                 }
             };
         } else if (int.class == type) {
+            CoverageTest.coverageArray[11] = true;
             return new Decoder.IntDecoder() {
                 @Override
                 public int decodeInt(JsonIterator iter) throws IOException {
                     ValueType valueType = iter.whatIsNext();
                     if (valueType == ValueType.NUMBER) {
+                        CoverageTest.coverageArray[12] = true;
                         return iter.readInt();
                     } else if (valueType == ValueType.NULL) {
+                        CoverageTest.coverageArray[13] = true;
                         iter.skip();
                         return 0;
                     } else {
@@ -411,13 +425,18 @@ public class GsonCompatibilityMode extends Config {
                 }
             };
         } else if (float.class == type) {
+            CoverageTest.coverageArray[14] = true;
             return new Decoder.FloatDecoder() {
                 @Override
                 public float decodeFloat(JsonIterator iter) throws IOException {
                     ValueType valueType = iter.whatIsNext();
                     if (valueType == ValueType.NUMBER) {
+                        CoverageTest.coverageArray[15] = true;
                         return iter.readFloat();
                     } else if (valueType == ValueType.NULL) {
+                        CoverageTest.coverageArray[16] = true;
+
+
                         iter.skip();
                         return 0.0f;
                     } else {
@@ -426,13 +445,19 @@ public class GsonCompatibilityMode extends Config {
                 }
             };
         } else if (double.class == type) {
+            CoverageTest.coverageArray[17] = true;
+
             return new Decoder.DoubleDecoder() {
                 @Override
                 public double decodeDouble(JsonIterator iter) throws IOException {
                     ValueType valueType = iter.whatIsNext();
                     if (valueType == ValueType.NUMBER) {
+                        CoverageTest.coverageArray[18] = true;
+
                         return iter.readDouble();
                     } else if (valueType == ValueType.NULL) {
+                        CoverageTest.coverageArray[19] = true;
+
                         iter.skip();
                         return 0.0d;
                     } else {
