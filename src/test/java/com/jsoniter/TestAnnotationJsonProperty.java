@@ -3,11 +3,11 @@ package com.jsoniter;
 import com.jsoniter.annotation.JsonCreator;
 import com.jsoniter.annotation.JsonMissingProperties;
 import com.jsoniter.annotation.JsonProperty;
-import com.jsoniter.fuzzy.StringIntDecoder;
+import com.jsoniter.fuzzy.*;
 import com.jsoniter.output.JsonStream;
-import com.jsoniter.spi.DecodingMode;
-import com.jsoniter.spi.JsonException;
+import com.jsoniter.spi.Decoder;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterAll;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -182,6 +182,50 @@ public class TestAnnotationJsonProperty extends TestCase {
         String input = "{\"hello\":100}";
         TestObject11 obj = JsonIterator.deserialize(input, TestObject11.class);
         assertEquals(100, obj.field);
+    }
+
+    public static class TestObject12 {
+        @JsonProperty(decoder = StringShortDecoder.class)
+        public short field1;
+    }
+
+    public void test_short_property_decoder() throws IOException {
+        JsonIterator iter = JsonIterator.parse("{\"field1\": \"16\"}");
+        TestObject12 obj = iter.read(TestObject12.class);
+        assertEquals(Short.parseShort("16"), obj.field1);
+    }
+
+    public static class TestObject13 {
+        @JsonProperty(decoder = StringDoubleDecoder.class)
+        public double field1;
+    }
+
+    public void test_double_property_decoder() throws IOException {
+        JsonIterator iter = JsonIterator.parse("{\"field1\": \"160000.1234\"}");
+        TestObject13 obj = iter.read(TestObject13.class);
+        assertEquals(Double.parseDouble("160000.1234"), obj.field1);
+    }
+
+    public static class TestObject14 {
+        @JsonProperty(decoder = StringFloatDecoder.class)
+        public float field1;
+    }
+
+    public void test_float_property_decoder() throws IOException {
+        JsonIterator iter = JsonIterator.parse("{\"field1\": \"80000.1234\"}");
+        TestObject14 obj = iter.read(TestObject14.class);
+        assertEquals(Float.parseFloat("80000.1234"), obj.field1);
+    }
+
+    public static class TestObject15 {
+        @JsonProperty(decoder = StringLongDecoder.class)
+        public long field1;
+    }
+
+    public void test_long_property_decoder() throws IOException {
+        JsonIterator iter = JsonIterator.parse("{\"field1\": \"320000\"}");
+        TestObject15 obj = iter.read(TestObject15.class);
+        assertEquals(Long.parseLong("320000"), obj.field1);
     }
 
 }
