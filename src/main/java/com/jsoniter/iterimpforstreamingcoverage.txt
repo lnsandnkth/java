@@ -1,6 +1,6 @@
 statement 1 is covered = true
 statement 2 is covered = true
-statement 3 is covered = false
+statement 3 is covered = true
 statement 4 is covered = true
 statement 5 is covered = true
 statement 6 is covered = true
@@ -16,5 +16,5 @@ statement 15 is covered = true
 statement 16 is covered = true
 statement 17 is covered = true
 statement 18 is covered = true
-statement 19 is covered = false
+statement 19 is covered = true
 statement 20 is covered = true

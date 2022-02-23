@@ -11,4 +11,13 @@ public class IterImplForStreamingTest extends TestCase {
 		String number = new String(numberChars.chars, 0, numberChars.charsLength);
 		assertEquals(maxDouble, number);
 	}
+
+	public void testStatement3() throws Exception {
+		// test resusable chars
+		String resuablecharnumber = "555555555555555555555555555555555555555";
+		JsonIterator iter = JsonIterator.parse("555555555555555555555555555555555555555");
+		IterImplForStreaming.numberChars numberChars = IterImplForStreaming.readNumber(iter);
+		String number = new String(numberChars.chars, 0, numberChars.charsLength);
+		assertEquals(resuablecharnumber, number);
+	}
 }
