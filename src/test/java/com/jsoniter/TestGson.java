@@ -214,6 +214,15 @@ public class TestGson extends TestCase {
         assertFalse(obj.field);
     }
 
+    public void test_true_as_boolean() {
+        Gson gson = new Gson();
+        TestObject6 obj = gson.fromJson("{\"field\":false}", TestObject6.class);
+        assertFalse(obj.field);
+        GsonCompatibilityMode config = new GsonCompatibilityMode.Builder().build();
+        obj = JsonIterator.deserialize(config, "{\"field\":false}", TestObject6.class);
+        assertFalse(obj.field);
+    }
+
     public static class TestObject7 {
         public long field;
     }
