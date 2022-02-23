@@ -1,6 +1,12 @@
 package com.jsoniter.spi;
 
+import jdk.internal.vm.compiler.collections.Pair;
+
 import java.lang.reflect.Type;
+import java.util.LinkedHashMap;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public interface OmitValue {
 
@@ -136,61 +142,115 @@ public interface OmitValue {
         }
 
         public static OmitValue parse(Type valueType, String defaultValueToOmit) {
-            if ("void".equals(defaultValueToOmit)) {
-                return null;
-            } else if ("null".equals(defaultValueToOmit)) {
-                return new OmitValue.Null();
-            } else if (boolean.class.equals(valueType)) {
-                Boolean defaultValue = Boolean.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
-            } else if (Boolean.class.equals(valueType)) {
-                Boolean defaultValue = Boolean.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.booleanValue()");
-            } else if (int.class.equals(valueType)) {
-                Integer defaultValue = Integer.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
-            } else if (Integer.class.equals(valueType)) {
-                Integer defaultValue = Integer.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.intValue()");
-            } else if (byte.class.equals(valueType)) {
-                Byte defaultValue = Byte.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
-            } else if (Byte.class.equals(valueType)) {
-                Byte defaultValue = Byte.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.byteValue()");
-            } else if (short.class.equals(valueType)) {
-                Short defaultValue = Short.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
-            } else if (Short.class.equals(valueType)) {
-                Short defaultValue = Short.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.shortValue()");
-            } else if (long.class.equals(valueType)) {
-                Long defaultValue = Long.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "L == %s");
-            } else if (Long.class.equals(valueType)) {
-                Long defaultValue = Long.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "L == %s.longValue()");
-            } else if (float.class.equals(valueType)) {
-                Float defaultValue = Float.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "F == %s");
-            } else if (Float.class.equals(valueType)) {
-                Float defaultValue = Float.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "F == %s.floatValue()");
-            } else if (double.class.equals(valueType)) {
-                Double defaultValue = Double.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "D == %s");
-            } else if (Double.class.equals(valueType)) {
-                Double defaultValue = Double.valueOf(defaultValueToOmit);
-                return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "D == %s.doubleValue()");
-            } else if (char.class.equals(valueType) && defaultValueToOmit.length() == 1) {
-                Character defaultValue = defaultValueToOmit.charAt(0);
-                return new OmitValue.Parsed(defaultValue, "'" + defaultValueToOmit + "' == %s");
-            } else if (Character.class.equals(valueType) && defaultValueToOmit.length() == 1) {
-                Character defaultValue = defaultValueToOmit.charAt(0);
-                return new OmitValue.Parsed(defaultValue, "'" + defaultValueToOmit + "' == %s.charValue()");
-            } else {
-                throw new UnsupportedOperationException("failed to parse defaultValueToOmit: " + defaultValueToOmit);
+
+            LinkedHashMap<Predicate<Void>, Supplier<OmitValue>> predicateToCallbackMap = new LinkedHashMap<>();
+
+            predicateToCallbackMap.put((pair) -> "void".equals(defaultValueToOmit), () -> null);
+            predicateToCallbackMap.put((pair) -> "null".equals(defaultValueToOmit), () -> new OmitValue.Null());
+            predicateToCallbackMap.put((pair) -> boolean.class.equals(valueType),
+                                       () -> {
+                                           Boolean defaultValue = Boolean.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> Boolean.class.equals(valueType),
+                                       () -> {
+                                           Boolean defaultValue = Boolean.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.booleanValue()");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> int.class.equals(valueType),
+                                       () -> {
+                                           Integer defaultValue = Integer.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> Integer.class.equals(valueType),
+                                       () -> {
+                                           Integer defaultValue = Integer.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.intValue()");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> byte.class.equals(valueType),
+                                       () -> {
+                                           Byte defaultValue = Byte.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> Byte.class.equals(valueType),
+                                       () -> {
+                                           Byte defaultValue = Byte.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.byteValue()");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> short.class.equals(valueType),
+                                       () -> {
+                                           Short defaultValue = Short.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> Short.class.equals(valueType),
+                                       () -> {
+                                           Short defaultValue = Short.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + " == %s.shortValue()");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> long.class.equals(valueType),
+                                       () -> {
+                                           Long defaultValue = Long.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "L == %s");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> Long.class.equals(valueType),
+                                       () -> {
+                                           Long defaultValue = Long.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "L == %s.longValue()");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> float.class.equals(valueType),
+                                       () -> {
+                                           Float defaultValue = Float.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "F == %s");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> Float.class.equals(valueType),
+                                       () -> {
+                                           Float defaultValue = Float.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "F == %s.floatValue()");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> double.class.equals(valueType),
+                                       () -> {
+                                           Double defaultValue = Double.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "D == %s");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> Double.class.equals(valueType),
+                                       () -> {
+                                           Double defaultValue = Double.valueOf(defaultValueToOmit);
+                                           return new OmitValue.Parsed(defaultValue, defaultValueToOmit + "D == %s.doubleValue()");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> char.class.equals(valueType) && defaultValueToOmit.length() == 1,
+                                       () -> {
+                                           Character defaultValue = defaultValueToOmit.charAt(0);
+                                           return new OmitValue.Parsed(defaultValue, "'" + defaultValueToOmit + "' == %s");
+                                       }
+                                      );
+            predicateToCallbackMap.put((pair) -> Character.class.equals(valueType) && defaultValueToOmit.length() == 1,
+                                       () -> {
+                                           Character defaultValue = defaultValueToOmit.charAt(0);
+                                           return new OmitValue.Parsed(defaultValue, "'" + defaultValueToOmit + "' == %s.charValue()");
+                                       }
+                                      );
+
+            for (Predicate<Void> predicate : predicateToCallbackMap.keySet()) {
+                if (predicate.test(null)) {
+                    return predicateToCallbackMap.get(predicate).get();
+                }
             }
+
+            throw new UnsupportedOperationException("failed to parse defaultValueToOmit: " + defaultValueToOmit);
         }
 
         @Override
