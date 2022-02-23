@@ -200,14 +200,14 @@ class CodegenImplNative {
 
         int i = 0;
         stmt_covered[i] = true;
-
+        CoverageSuit.print();
         // ------------------------------------------------------------------------
         // the field decoder might be registered directly
         Decoder decoder = JsoniterSpi.getDecoder(cacheKey);
         if (decoder == null) {
             i = 1;
             stmt_covered[i] = true;
-
+            CoverageSuit.print();
             // if cache key is for field, and there is no field decoder specified
             // update cache key for normal type
             cacheKey = TypeLiteral.create(valueType).getDecoderCacheKey();
@@ -215,22 +215,26 @@ class CodegenImplNative {
             if (decoder == null) {
                 i = 2;
                 stmt_covered[i] = true;
+                CoverageSuit.print();
     
                 if (valueType instanceof Class) {
                     i = 3;
                     stmt_covered[i] = true;
-        
+                    CoverageSuit.print();
+
                     Class clazz = (Class) valueType;
                     String nativeRead = NATIVE_READS.get(clazz.getCanonicalName());
                     if (nativeRead != null) {
                         i = 4;
                         stmt_covered[i] = true;
+                        CoverageSuit.print();
             
                         return nativeRead;
                     }
                 } else if (valueType instanceof WildcardType) {
                     i = 5;
                     stmt_covered[i] = true;
+                    CoverageSuit.print();
         
                     return NATIVE_READS.get(Object.class.getCanonicalName());
                 }
@@ -238,6 +242,7 @@ class CodegenImplNative {
                 if (Codegen.canStaticAccess(cacheKey)) {
                     i = 6;
                     stmt_covered[i] = true;
+                    CoverageSuit.print();
         
                     return String.format("%s.decode_(iter)", cacheKey);
                 } else {
@@ -249,10 +254,12 @@ class CodegenImplNative {
         if (valueType == boolean.class) {
             i = 7;
             stmt_covered[i] = true;
+            CoverageSuit.print();
 
             if (!(decoder instanceof Decoder.BooleanDecoder)) {
                 i = 8;
                 stmt_covered[i] = true;
+                CoverageSuit.print();
     
                 throw new JsonException("decoder for " + cacheKey + "must implement Decoder.BooleanDecoder");
             }
@@ -261,10 +268,12 @@ class CodegenImplNative {
         if (valueType == byte.class) {
             i = 9;
             stmt_covered[i] = true;
+            CoverageSuit.print();
 
             if (!(decoder instanceof Decoder.ShortDecoder)) {
                 i = 10;
                 stmt_covered[i] = true;
+                CoverageSuit.print();
     
                 throw new JsonException("decoder for " + cacheKey + "must implement Decoder.ShortDecoder");
             }
@@ -273,10 +282,12 @@ class CodegenImplNative {
         if (valueType == short.class) {
             i = 11;
             stmt_covered[i] = true;
+            CoverageSuit.print();
 
             if (!(decoder instanceof Decoder.ShortDecoder)) {
                 i = 12;
                 stmt_covered[i] = true;
+                CoverageSuit.print();
     
                 throw new JsonException("decoder for " + cacheKey + "must implement Decoder.ShortDecoder");
             }
@@ -285,10 +296,12 @@ class CodegenImplNative {
         if (valueType == char.class) {
             i = 13;
             stmt_covered[i] = true;
+            CoverageSuit.print();
 
             if (!(decoder instanceof Decoder.IntDecoder)) {
                 i = 14;
                 stmt_covered[i] = true;
+                CoverageSuit.print();
     
                 throw new JsonException("decoder for " + cacheKey + "must implement Decoder.IntDecoder");
             }
@@ -297,10 +310,12 @@ class CodegenImplNative {
         if (valueType == int.class) {
             i = 15;
             stmt_covered[i] = true;
+            CoverageSuit.print();
 
             if (!(decoder instanceof Decoder.IntDecoder)) {
                 i = 16;
                 stmt_covered[i] = true;
+                CoverageSuit.print();
     
                 throw new JsonException("decoder for " + cacheKey + "must implement Decoder.IntDecoder");
             }
@@ -309,10 +324,12 @@ class CodegenImplNative {
         if (valueType == long.class) {
             i = 17;
             stmt_covered[i] = true;
+            CoverageSuit.print();
 
             if (!(decoder instanceof Decoder.LongDecoder)) {
                 i = 18;
                 stmt_covered[i] = true;
+                CoverageSuit.print();
     
                 throw new JsonException("decoder for " + cacheKey + "must implement Decoder.LongDecoder");
             }
@@ -321,10 +338,12 @@ class CodegenImplNative {
         if (valueType == float.class) {
             i = 19;
             stmt_covered[i] = true;
+            CoverageSuit.print();
 
             if (!(decoder instanceof Decoder.FloatDecoder)) {
                 i = 20;
                 stmt_covered[i] = true;
+                CoverageSuit.print();
     
                 throw new JsonException("decoder for " + cacheKey + "must implement Decoder.FloatDecoder");
             }
@@ -333,10 +352,12 @@ class CodegenImplNative {
         if (valueType == double.class) {
             i = 21;
             stmt_covered[i] = true;
+            CoverageSuit.print();
 
             if (!(decoder instanceof Decoder.DoubleDecoder)) {
                 i = 22;
                 stmt_covered[i] = true;
+                CoverageSuit.print();
     
                 throw new JsonException("decoder for " + cacheKey + "must implement Decoder.DoubleDecoder");
             }
