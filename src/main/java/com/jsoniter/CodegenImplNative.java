@@ -246,6 +246,7 @@ class CodegenImplNative {
                 }
             }
         }
+
         if (valueType == boolean.class) {
             i = 7;
             stmt_covered[i] = true;

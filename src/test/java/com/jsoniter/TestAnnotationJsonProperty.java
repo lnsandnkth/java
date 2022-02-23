@@ -7,7 +7,6 @@ import com.jsoniter.fuzzy.*;
 import com.jsoniter.output.JsonStream;
 import com.jsoniter.spi.Decoder;
 import junit.framework.TestCase;
-import org.junit.jupiter.api.AfterAll;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -228,4 +227,45 @@ public class TestAnnotationJsonProperty extends TestCase {
         assertEquals(Long.parseLong("320000"), obj.field1);
     }
 
+    class StringCharDecoder extends Decoder.IntDecoder {
+
+        @Override
+        public int decodeInt(JsonIterator iter) throws IOException {
+
+            byte c = CodegenAccess.nextToken(iter);
+            if (c != '"') {
+                throw iter.reportError("StringCharDecoder", "expect \", but found: " + (char) c);
+            }
+            char val = (char) iter.readInt();
+            c = CodegenAccess.nextToken(iter);
+            if (c != '"') {
+                throw iter.reportError("StringCharDecoder", "expect \", but found: " + (char) c);
+            }
+            return val;
+        }
+    }
+
+    public static class TestObject20 {
+        @JsonProperty(decoder = StringCharDecoder.class)
+        public char field1;
+    }
+
+    public void test_char_property_custom_decoder() throws IOException {
+
+        JsonIterator iter = JsonIterator.parse("{\"field1\": \"5\"}");
+        TestObject20 obj = iter.read(TestObject20.class);
+        assertEquals(5, obj.field1);
+    }
+
+    public static class TestObject21 {
+        @JsonProperty(decoder = StringDoubleDecoder.class)
+        public char field1;
+    }
+
+    public void test_char_property_wrong_decoder() throws IOException {
+
+        JsonIterator iter = JsonIterator.parse("{\"field1\": \"5\"}");
+        TestObject21 obj = iter.read(TestObject21.class);
+        assertEquals(5, obj.field1);
+    }
 }
