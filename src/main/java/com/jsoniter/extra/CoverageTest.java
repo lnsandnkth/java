@@ -8,7 +8,7 @@ public class CoverageTest {
 
     public static boolean[] coverageArray = new boolean[20];
 
-    public static void writeToFile() throws IOException, IOException {
+    public static void writeToFile() {
         String outputString = "";
         int coveragePositives = 0;
 
@@ -22,8 +22,14 @@ public class CoverageTest {
 
         outputString=outputString+ "Coverage ratio: " + coveragePositives+"/"+coverageArray.length;
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter("coverage3.txt"));
-        writer.write(outputString);
-        writer.close();
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter("coverage3.txt"));
+            writer.write(outputString);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
