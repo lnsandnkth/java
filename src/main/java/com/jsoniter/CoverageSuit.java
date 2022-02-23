@@ -7,7 +7,7 @@ import java.io.IOException;
 public class CoverageSuit {
     public static boolean[] stmt_covered = new boolean[24];
 
-    public static void print() throws IOException, IOException {
+    public static void print() {
         String s = "";
         int i = 0;
         float count = 0;
@@ -20,8 +20,13 @@ public class CoverageSuit {
         }
         s += count + " statements covered of 23 statements: " + count/24 + "% coverage" + "\n";
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter("coverage"));
-        writer.write(s);
-        writer.close();
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter("coverage"));
+            writer.write(s);
+            writer.close();
+        }catch (IOException e){
+
+        }
+
     }
 }
