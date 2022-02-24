@@ -249,6 +249,19 @@ public class TestGson extends TestCase {
         assertEquals(0, obj.field);
     }
 
+    public static class TestObjectNO {
+        public int field;
+    }
+
+    public void test_NO_as_int() {
+        Gson gson = new Gson();
+        TestObjectNO obj = gson.fromJson("{\"field\":55}", TestObjectNO.class);
+        assertEquals(55, obj.field);
+        GsonCompatibilityMode config = new GsonCompatibilityMode.Builder().build();
+        obj = JsonIterator.deserialize(config, "{\"field\":55}", TestObjectNO.class);
+        assertEquals(55, obj.field);
+    }
+
     public static class TestObject9 {
         public float field;
     }
