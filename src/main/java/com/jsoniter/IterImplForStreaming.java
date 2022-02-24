@@ -316,38 +316,100 @@ class IterImplForStreaming {
 
     public static Any readAny(JsonIterator iter) throws IOException {
         // TODO: avoid small memory allocation
+        int k = 0; // statement number
+        List<String> result = null;
+        try {
+            result = Files.readAllLines(Paths.get("src/main/java/com/jsoniter/iterimpforstreamingcoveragereadany.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         iter.skipStartedAt = iter.head;
+        FileWriter writer = new FileWriter("src/main/java/com/jsoniter/iterimpforstreamingcoveragereadany.txt");
+
         byte c = nextToken(iter);
         switch (c) {
             case '"':
+                k = 0;
+                result.set(k, "statement " + (k + 1) + " is covered = true");
                 skipString(iter);
                 byte[] copied = copySkippedBytes(iter);
+                for (String str : result) {
+                    writer.write(str + System.lineSeparator());
+                }
+                writer.close();
                 return Any.lazyString(copied, 0, copied.length);
             case 't':
+                k = 1;
+                result.set(k, "statement " + (k + 1) + " is covered = true");
+                for (String str : result) {
+                    writer.write(str + System.lineSeparator());
+                }
+                writer.close();
                 skipFixedBytes(iter, 3);
                 iter.skipStartedAt = -1;
+                writer.close();
                 return Any.wrap(true);
             case 'f':
+                k = 2;
+                result.set(k, "statement " + (k + 1) + " is covered = true");
+                for (String str : result) {
+                    writer.write(str + System.lineSeparator());
+                }
+                writer.close();
                 skipFixedBytes(iter, 4);
                 iter.skipStartedAt = -1;
+                writer.close();
                 return Any.wrap(false);
             case 'n':
+                k = 3;
+                result.set(k, "statement " + (k + 1) + " is covered = true");
+                for (String str : result) {
+                    writer.write(str + System.lineSeparator());
+                }
+                writer.close();
                 skipFixedBytes(iter, 3);
                 iter.skipStartedAt = -1;
+                writer.close();
                 return Any.wrap((Object) null);
             case '[':
+                k = 4;
+                result.set(k, "statement " + (k + 1) + " is covered = true");
+                for (String str : result) {
+                    writer.write(str + System.lineSeparator());
+                }
+                writer.close();
                 skipArray(iter);
                 copied = copySkippedBytes(iter);
+                writer.close();
                 return Any.lazyArray(copied, 0, copied.length);
             case '{':
+                k = 5;
+                result.set(k, "statement " + (k + 1) + " is covered = true");
+                for (String str : result) {
+                    writer.write(str + System.lineSeparator());
+                }
+                writer.close();
                 skipObject(iter);
                 copied = copySkippedBytes(iter);
+                writer.close();
                 return Any.lazyObject(copied, 0, copied.length);
             default:
                 if (skipNumber(iter)) {
+                    k = 6;
+                    result.set(k, "statement " + (k + 1) + " is covered = true");
+                    for (String str : result) {
+                        writer.write(str + System.lineSeparator());
+                    }
+                    writer.close();
                     copied = copySkippedBytes(iter);
                     return Any.lazyDouble(copied, 0, copied.length);
                 } else {
+                    k = 7;
+                    result.set(k, "statement " + (k + 1) + " is covered = true");
+                    for (String str : result) {
+                        writer.write(str + System.lineSeparator());
+                    }
+                    writer.close();
                     copied = copySkippedBytes(iter);
                     return Any.lazyLong(copied, 0, copied.length);
                 }
