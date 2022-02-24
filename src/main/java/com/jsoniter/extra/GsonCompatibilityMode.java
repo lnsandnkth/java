@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import static com.jsoniter.extra.Evaluator.evaluator;
+
 public class GsonCompatibilityMode extends Config {
 
     private final static int SURR1_FIRST = 0xD800;
@@ -335,6 +337,7 @@ public class GsonCompatibilityMode extends Config {
     public Decoder createDecoder(String cacheKey, Type type) {
         if (Date.class == type) {
             CoverageTest.coverageArray[0] = true;
+            CoverageTest.writeToFile();
             return new Decoder() {
                 @Override
                 public Object decode(JsonIterator iter) throws IOException {
@@ -349,74 +352,44 @@ public class GsonCompatibilityMode extends Config {
             };
         } else if (String.class == type) {
             CoverageTest.coverageArray[1] = true;
+            CoverageTest.writeToFile();
+
             return new Decoder() {
                 @Override
                 public Object decode(JsonIterator iter) throws IOException {
-                    ValueType valueType = iter.whatIsNext();
-                    if (valueType == ValueType.STRING) {
-                        CoverageTest.coverageArray[2] = true;
-                        return iter.readString();
-                    } else if (valueType == ValueType.NUMBER) {
-                        CoverageTest.coverageArray[3] = true;
-                        return iter.readNumberAsString();
-                    } else if (valueType == ValueType.BOOLEAN) {
-                        CoverageTest.coverageArray[4] = true;
-                        return iter.readBoolean() ? "true" : "false";
-                    } else if (valueType == ValueType.NULL) {
-                        CoverageTest.coverageArray[5] = true;
-                        iter.skip();
-                        return null;
-                    } else {
-                        throw new JsonException("expect string, but found " + valueType);
-                    }
+                   return evaluator(iter);
                 }
             };
         } else if (boolean.class == type) {
             return new Decoder.BooleanDecoder() {
                 @Override
                 public boolean decodeBoolean(JsonIterator iter) throws IOException {
-                    ValueType valueType = iter.whatIsNext();
-                    if (valueType == ValueType.BOOLEAN) {
-                        CoverageTest.coverageArray[6] = true;
-                        return iter.readBoolean();
-                    } else if (valueType == ValueType.NULL) {
-                        CoverageTest.coverageArray[7] = true;
-                        iter.skip();
-                        return false;
-                    } else {
-                        throw new JsonException("expect boolean, but found " + valueType);
-                    }
+                   return BoolEval.evaluator(iter);
                 }
             };
         } else if (long.class == type) {
             CoverageTest.coverageArray[8] = true;
+            CoverageTest.writeToFile();
             return new Decoder.LongDecoder() {
                 @Override
                 public long decodeLong(JsonIterator iter) throws IOException {
-                    ValueType valueType = iter.whatIsNext();
-                    if (valueType == ValueType.NUMBER) {
-                        CoverageTest.coverageArray[9] = true;
-                        return iter.readLong();
-                    } else if (valueType == ValueType.NULL) {
-                        CoverageTest.coverageArray[10] = true;
-                        iter.skip();
-                        return 0;
-                    } else {
-                        throw new JsonException("expect long, but found " + valueType);
-                    }
+                    return LongEval.evaluator(iter);
                 }
             };
         } else if (int.class == type) {
             CoverageTest.coverageArray[11] = true;
+            CoverageTest.writeToFile();
             return new Decoder.IntDecoder() {
                 @Override
                 public int decodeInt(JsonIterator iter) throws IOException {
                     ValueType valueType = iter.whatIsNext();
                     if (valueType == ValueType.NUMBER) {
                         CoverageTest.coverageArray[12] = true;
+                        CoverageTest.writeToFile();
                         return iter.readInt();
                     } else if (valueType == ValueType.NULL) {
                         CoverageTest.coverageArray[13] = true;
+                        CoverageTest.writeToFile();
                         iter.skip();
                         return 0;
                     } else {
@@ -426,15 +399,18 @@ public class GsonCompatibilityMode extends Config {
             };
         } else if (float.class == type) {
             CoverageTest.coverageArray[14] = true;
+            CoverageTest.writeToFile();
             return new Decoder.FloatDecoder() {
                 @Override
                 public float decodeFloat(JsonIterator iter) throws IOException {
                     ValueType valueType = iter.whatIsNext();
                     if (valueType == ValueType.NUMBER) {
                         CoverageTest.coverageArray[15] = true;
+                        CoverageTest.writeToFile();
                         return iter.readFloat();
                     } else if (valueType == ValueType.NULL) {
                         CoverageTest.coverageArray[16] = true;
+                        CoverageTest.writeToFile();
 
 
                         iter.skip();
@@ -446,6 +422,7 @@ public class GsonCompatibilityMode extends Config {
             };
         } else if (double.class == type) {
             CoverageTest.coverageArray[17] = true;
+            CoverageTest.writeToFile();
 
             return new Decoder.DoubleDecoder() {
                 @Override
@@ -453,11 +430,12 @@ public class GsonCompatibilityMode extends Config {
                     ValueType valueType = iter.whatIsNext();
                     if (valueType == ValueType.NUMBER) {
                         CoverageTest.coverageArray[18] = true;
+                        CoverageTest.writeToFile();
 
                         return iter.readDouble();
                     } else if (valueType == ValueType.NULL) {
                         CoverageTest.coverageArray[19] = true;
-
+                        CoverageTest.writeToFile();
                         iter.skip();
                         return 0.0d;
                     } else {
