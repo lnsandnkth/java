@@ -200,6 +200,15 @@ public class TestGson extends TestCase {
         str = JsonIterator.deserialize(config, "true", String.class);
         assertEquals("true", str);
     }
+    public void test_null() {
+        Gson gson = new Gson();
+        String str = gson.fromJson("",  String.class);
+        GsonCompatibilityMode config = new GsonCompatibilityMode.Builder().build();
+        str = JsonIterator.deserialize(config, "null", String.class);
+        assertEquals("", str);
+    }
+
+
 
     public static class TestObject6 {
         public boolean field;
