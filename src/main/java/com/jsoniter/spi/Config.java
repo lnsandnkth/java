@@ -408,36 +408,13 @@ public class Config extends EmptyExtension {
             i = 0;
             result.set(i, "statement " + (i + 1) + " is covered = true");
             boolean annotated = false;
-            JsonIgnore jsonIgnore = getJsonIgnore(binding.annotations);
-            if (jsonIgnore != null) {
-                i = 1;
-                result.set(i, "statement " + (i + 1) + " is covered = true");
-                annotated = true;
-                if (jsonIgnore.ignoreDecoding()) {
-                    i = 2;
-                    result.set(i, "statement " + (i + 1) + " is covered = true");
-                    binding.fromNames = new String[0];
-                }
-                if (jsonIgnore.ignoreEncoding()) {
-                    i = 3;
-                    result.set(i, "statement " + (i + 1) + " is covered = true");
-                    binding.toNames = new String[0];
-                }
-            }
+            // jsonIgnore
+            // REFACTORED
+            annotated = jsonignore(binding, annotated, result, i);
             // map JsonUnwrapper is not getter
-            JsonUnwrapper jsonUnwrapper = getJsonUnwrapper(binding.annotations);
-            if (jsonUnwrapper != null) {
-                i = 4;
-                result.set(i, "statement " + (i + 1) + " is covered = true");
-                annotated = true;
-                binding.fromNames = new String[0];
-                binding.toNames = new String[0];
-            }
-            if (globalOmitDefault) {
-                i = 5;
-                result.set(i, "statement " + (i + 1) + " is covered = true");
-                binding.defaultValueToOmit = createOmitValue(binding.valueType);
-            }
+            // REFACTORED
+            annotated = jsonunwrapper(binding, annotated, result, i);
+
             JsonProperty jsonProperty = getJsonProperty(binding.annotations);
             if (jsonProperty != null) {
                 i = 6;
@@ -463,38 +440,8 @@ public class Config extends EmptyExtension {
                 binding.fromNames = new String[0];
                 desc.onExtraProperties = binding;
             }
-            if (annotated && binding.field != null) {
-                i = 9;
-                result.set(i, "statement " + (i + 1) + " is covered = true");
-                if (desc.setters != null) {
-                    i = 10;
-                    result.set(i, "statement " + (i + 1) + " is covered = true");
-                    for (Binding setter : desc.setters) {
-                        i = 11;
-                        result.set(i, "statement " + (i + 1) + " is covered = true");
-                        if (binding.field.getName().equals(setter.name)) {
-                            i = 12;
-                            result.set(i, "statement " + (i + 1) + " is covered = true");
-                            setter.fromNames = new String[0];
-                            setter.toNames = new String[0];
-                        }
-                    }
-                }
-                if (desc.getters != null) {
-                    i = 13;
-                    result.set(i, "statement " + (i + 1) + " is covered = true");
-                    for (Binding getter : desc.getters) {
-                        i = 14;
-                        result.set(i, "statement " + (i + 1) + " is covered = true");
-                        if (binding.field.getName().equals(getter.name)) {
-                            i = 15;
-                            result.set(i, "statement " + (i + 1) + " is covered = true");
-                            getter.fromNames = new String[0];
-                            getter.toNames = new String[0];
-                        }
-                    }
-                }
-            }
+            // REFACTORED
+            annotAndBindingField(annotated, binding, desc, result, i);
         }
         // write to file here
         FileWriter writer = null;
@@ -508,6 +455,77 @@ public class Config extends EmptyExtension {
             e.printStackTrace();
         }
     }
+
+    private boolean jsonignore(Binding binding, boolean annotated, List<String> result, int i) {
+        JsonIgnore jsonIgnore = getJsonIgnore(binding.annotations);
+        if (jsonIgnore != null){
+            i = 1;
+            result.set(i, "statement " + (i + 1) + " is covered = true");
+            annotated = true;
+            if (jsonIgnore.ignoreDecoding()){
+                i = 2;
+                result.set(i, "statement " + (i + 1) + " is covered = true");
+                binding.fromNames = new String[0];
+            }
+            if (jsonIgnore.ignoreEncoding()){
+                i = 3;
+                result.set(i, "statement " + (i + 1) + " is covered = true");
+                binding.toNames = new String[0];
+            }
+        }
+        return annotated;
+    }
+
+    private boolean jsonunwrapper(Binding binding, boolean annotated, List<String> result, int i){
+        JsonUnwrapper jsonUnwrapper = getJsonUnwrapper(binding.annotations);
+        if (jsonUnwrapper != null) {
+            i = 4;
+            result.set(i, "statement " + (i + 1) + " is covered = true");
+            annotated = true;
+            binding.fromNames = new String[0];
+            binding.toNames = new String[0];
+        }
+        return annotated;
+    }
+
+    private void annotAndBindingField(boolean annotated, Binding binding, ClassDescriptor desc, List<String> result, int i) {
+        if (annotated && binding.field != null) {
+            i = 9;
+            result.set(i, "statement " + (i + 1) + " is covered = true");
+            if (desc.setters != null) {
+                i = 10;
+                result.set(i, "statement " + (i + 1) + " is covered = true");
+                for (Binding setter : desc.setters) {
+                    i = 11;
+                    result.set(i, "statement " + (i + 1) + " is covered = true");
+                    if (binding.field.getName().equals(setter.name)) {
+                        i = 12;
+                        result.set(i, "statement " + (i + 1) + " is covered = true");
+                        setter.fromNames = new String[0];
+                        setter.toNames = new String[0];
+                    }
+                }
+            }
+            if (desc.getters != null) {
+                i = 13;
+                result.set(i, "statement " + (i + 1) + " is covered = true");
+                for (Binding getter : desc.getters) {
+                    i = 14;
+                    result.set(i, "statement " + (i + 1) + " is covered = true");
+                    if (binding.field.getName().equals(getter.name)) {
+                        i = 15;
+                        result.set(i, "statement " + (i + 1) + " is covered = true");
+                        getter.fromNames = new String[0];
+                        getter.toNames = new String[0];
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
     private void updateBindingWithJsonProperty(Binding binding, JsonProperty jsonProperty) {
         binding.asMissingWhenNotPresent = jsonProperty.required();
         binding.isNullable = jsonProperty.nullable();
