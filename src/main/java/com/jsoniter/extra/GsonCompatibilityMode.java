@@ -367,6 +367,7 @@ public class GsonCompatibilityMode extends Config {
                    return BoolEval.evaluator(iter);
                 }
             };
+
         } else if (long.class == type) {
             CoverageTest.coverageArray[8] = true;
             CoverageTest.writeToFile();
