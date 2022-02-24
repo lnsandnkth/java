@@ -245,6 +245,16 @@ public class TestGson extends TestCase {
         assertEquals(0, obj.field);
     }
 
+    public void test_actualNumber_as_long() {
+        Gson gson = new Gson();
+        TestObject7 obj = gson.fromJson("{\"field\":5}", TestObject7.class);
+        assertEquals(5, obj.field);
+        GsonCompatibilityMode config = new GsonCompatibilityMode.Builder().build();
+        obj = JsonIterator.deserialize(config, "{\"field\":5}", TestObject7.class);
+        assertEquals(5, obj.field);
+    }
+
+
     public static class TestObject8 {
         public int field;
     }
