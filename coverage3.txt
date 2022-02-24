@@ -3,14 +3,14 @@ Statement 1 is covered: true
 Statement 2 is covered: true
 Statement 3 is covered: true
 Statement 4 is covered: true
-Statement 5 is covered: false
-Statement 6 is covered: false
+Statement 5 is covered: true
+Statement 6 is covered: true
 Statement 7 is covered: true
 Statement 8 is covered: true
-Statement 9 is covered: false
+Statement 9 is covered: true
 Statement 10 is covered: true
 Statement 11 is covered: true
-Statement 12 is covered: false
+Statement 12 is covered: true
 Statement 13 is covered: true
 Statement 14 is covered: false
 Statement 15 is covered: false
@@ -18,4 +18,4 @@ Statement 16 is covered: false
 Statement 17 is covered: false
 Statement 18 is covered: false
 Statement 19 is covered: false
-Coverage ratio: 10/20
+Coverage ratio: 14/20
